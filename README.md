@@ -71,3 +71,19 @@ Pour collaborer avec d'autres développeurs, vous pouvez créer une "pull reques
 - **Étape 3 :** Remplissez les détails de la pull request et soumettez-la pour révision.
 
 Ces étapes vous permettront de cloner un dépôt, de créer des branches, et d'envoyer votre code sur GitHub, facilitant ainsi la collaboration et la gestion de versions de votre projet.
+
+
+### 5. Compilation et Exécution du Code
+
+#### En ligne de commande
+
+```bash
+gcc -o super_matrice super_matrice.c
+
+```
+
+#### En utilisant Makefile
+
+```bash
+make
+```

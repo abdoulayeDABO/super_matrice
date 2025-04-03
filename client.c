@@ -33,6 +33,21 @@ int main(){
         printf("\n");
     }
 
+    // Affichage de l'élément à la position (1, 2)
+    printf("Element a la position (1, 2) : %5.2f\n", acces(sm, 1, 2));
+
+
+    // Vérification de la contiguïté
+    int result = contiguite(sm);
+    printf("Resultat de la verification de la contiguite : %d\n", result);
+    if (result == 2) {
+        printf("Les lignes de la supermatrice sont contigues en ordre.\n");
+    } else if (result == 1) {
+        printf("Les lignes de la supermatrice sont contigues en desordre.\n");
+    } else {
+        printf("Les lignes de la supermatrice ne sont pas contigues.\n");
+    }
+
     // Libération de la mémoire
     libererSupermat(sm);
 
