@@ -1,21 +1,25 @@
-#include "supermat.h"
+#ifndef SUPERMAT_H
+#define SUPERMAT_H
 
+#include <stdio.h>
+#include <stdlib.h>
 
-/** 
-  Ecrire ici les prototypes des fonctions de supermat.c
- */
+// Définition de la structure de la supermatrice
+typedef struct {
+    int nl;       // Nombre de lignes
+    int nc;       // Nombre de colonnes
+    double **ligne; // Tableau de pointeurs vers les lignes de la matrice
+} Supermatrice;
 
-// Exemple de fonction
+// Définition du type SUPERMRT comme un pointeur vers Supermatrice
+typedef Supermatrice* SUPERMRT;
 
-/**
-  * Fonction qui affiche un message
-  * mettre ici une description de la fonction
-  * Cette structure n'est pas obligatoire, mais elle permet de documenter le code
-  *
-  * @param void // aucun paramètre
-  * @return void // ne retourne rien
-  *
-*/
+// Prototype de la fonction d'allocation
+SUPERMRT allouerSupermat(int nl, int nc);
 
-// void afficheMessage();
+// Prototype de la fonction de libération de mémoire
+void libererSupermat(SUPERMRT sm);
+
+#endif // SUPERMAT_H
+
 
