@@ -84,3 +84,24 @@ int contiguite(SUPERMRT sm) {
 
     return contigu;
 }
+// Fonction pour extraire une sous-matrice d'une supermatrice
+SUPERMRT sousMatrice(SUPERMRT sm, int ligne_deb, int ligne_fin, int col_deb, int col_fin) {
+    if (sm == NULL || ligne_deb < 0 || ligne_fin >= sm->nl || col_deb < 0 || col_fin >= sm->nc) {
+        fprintf(stderr, "Indices de sous-matrice invalides.\n");
+        return NULL;
+    }
+
+    // Allocation de la sous-matrice
+    int nl_sous = ligne_fin - ligne_deb + 1;
+    int nc_sous = col_fin - col_deb + 1;
+    SUPERMRT sm_sous = allouerSupermat(nl_sous, nc_sous);
+
+    // Copie des éléments de la supermatrice dans la sous-matrice
+    for (int i = 0; i < nl_sous; i++) {
+        for (int j = 0; j < nc_sous; j++) {
+            sm_sous->ligne[i][j] = sm->ligne[ligne_deb + i][col_deb + j];
+        }
+    }
+
+    return sm_sous;
+}
