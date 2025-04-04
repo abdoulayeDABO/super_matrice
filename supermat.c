@@ -84,24 +84,36 @@ int contiguite(SUPERMRT sm) {
 
     return contigu;
 }
-// Fonction pour extraire une sous-matrice d'une supermatrice
-SUPERMRT sousMatrice(SUPERMRT sm, int ligne_deb, int ligne_fin, int col_deb, int col_fin) {
-    if (sm == NULL || ligne_deb < 0 || ligne_fin >= sm->nl || col_deb < 0 || col_fin >= sm->nc) {
-        fprintf(stderr, "Indices de sous-matrice invalides.\n");
-        return NULL;
+SUPERMRT sousMatrice(SUPERMRT a, int Ll, int L2, int cl, int c2) {
+    // Vérification de la validité des indices
+    if (Ll < 0 || L2 >= a->nl || cl < 0 || c2 >= a->nc || Ll > L2 || cl > c2) {
+        fprintf(stderr, "Indices invalides pour la sous-matrice.\n");
+        return NULL; // Retourne NULL si les indices sont incorrects
     }
 
-    // Allocation de la sous-matrice
-    int nl_sous = ligne_fin - ligne_deb + 1;
-    int nc_sous = col_fin - col_deb + 1;
-    SUPERMRT sm_sous = allouerSupermat(nl_sous, nc_sous);
-
-    // Copie des éléments de la supermatrice dans la sous-matrice
-    for (int i = 0; i < nl_sous; i++) {
-        for (int j = 0; j < nc_sous; j++) {
-            sm_sous->ligne[i][j] = sm->ligne[ligne_deb + i][col_deb + j];
-        }
+    // Allouer la nouvelle supermatrice pour la sous-matrice (seulement la structure)
+    SUPERMRT sm_sous = (SUPERMRT)malloc(sizeof(Supermatrice));
+    if (sm_sous == NULL) {
+        fprintf(stderr, "Erreur d'allocation de la supermatrice.\n");
+        return NULL; // Si l'allocation échoue, retourne NULL
     }
 
-    return sm_sous;
+    // Initialiser les dimensions de la sous-matrice
+    sm_sous->nl = L2 - Ll + 1;
+    sm_sous->nc = c2 - cl + 1;
+
+    // Allouer un tableau de pointeurs vers les lignes de la sous-matrice
+    sm_sous->ligne = (double**)malloc(sm_sous->nl * sizeof(double*));
+    if (sm_sous->ligne == NULL) {
+        fprintf(stderr, "Erreur d'allocation des pointeurs de ligne de la sous-matrice.\n");
+        free(sm_sous);  // Libération du descripteur si l'allocation échoue
+        return NULL;    // Retourner NULL si l'allocation échoue
+    }
+
+    // Configurer les lignes de la sous-matrice pour qu'elles pointent vers les lignes correspondantes de la supermatrice
+    for (int i = Ll; i <= L2; i++) {
+        sm_sous->ligne[i - Ll] = &a->ligne[i][cl]; // Pointer sur la bonne partie de la ligne dans la supermatrice
+    }
+
+    return sm_sous; // Retourner la sous-matrice
 }
