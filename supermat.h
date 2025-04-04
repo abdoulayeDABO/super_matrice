@@ -40,6 +40,7 @@ void libererSupermat(SUPERMRT sm);
 // Prototype de la fonction d'affichage d'un message
 int contiguite(SUPERMRT sm);
 
+// Prototype de la fonction sousMatrice() 
 SUPERMRT sousMatrice(SUPERMRT a, int Ll, int L2, int cl, int c2);
 
 #endif
