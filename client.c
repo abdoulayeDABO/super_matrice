@@ -53,10 +53,10 @@ int main(){
     int Ll = 1, L2 = 2, cl = 1, c2 = 2;  // On extrait les lignes 1 à 2 et les colonnes 1 à 2
     SUPERMRT sm_sous = sousMatrice(sm, Ll, L2, cl, c2);
     if (sm_sous == NULL) {
-        printf("Erreur lors de la création de la sous-matrice.\n");
+        printf("Erreur lors de la creation de la sous-matrice.\n");
     } else {
         // Affichage de la sous-matrice
-        printf("Sous-matrice extraite de (%d,%d) à (%d,%d) :\n", Ll, cl, L2, c2);
+        printf("Sous-matrice extraite de (%d,%d) a (%d,%d) :\n", Ll, cl, L2, c2);
         for (int i = 0; i < sm_sous->nl; i++) {
             for (int j = 0; j < sm_sous->nc; j++) {
                 printf("%5.2f ", sm_sous->ligne[i][j]);

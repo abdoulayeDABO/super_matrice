@@ -74,6 +74,7 @@ int contiguite(SUPERMRT sm) {
             contigu = 2; 
         }
 
+        // Methode alternative pour vérifier la contiguïté
         // if(&(sm->ligne[i + 1]) != &(sm->ligne[i + sm -> nc])){
         //     contigu = 1;
         //     break; 
