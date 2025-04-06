@@ -84,3 +84,20 @@ int contiguite(SUPERMRT sm) {
 
     return contigu;
 }
+
+// Fonction pour libérer une supermatrice (inverse de allouerSupermat)
+void rendreSupermat(SUPERMRT sm) {
+    if (sm == NULL) return;
+
+    // Libérer chaque ligne
+    for (int i = 0; i < sm->nl; i++) {
+        free(sm->ligne[i]);
+    }
+
+    // Libérer le tableau de pointeurs de lignes
+    free(sm->ligne);
+
+    // Libérer la structure elle-même
+    free(sm);
+}
+
