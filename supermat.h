@@ -40,6 +40,8 @@ void libererSupermat(SUPERMRT sm);
 // Prototype de la fonction d'affichage d'un message
 int contiguite(SUPERMRT sm);
 
+// Prototype de la fonction de Libèrer l'espace mémoire occupé par une supermatrice
+void rendreSupermat(SUPERMRT sm);
 
 #endif
 
