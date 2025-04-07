@@ -70,6 +70,35 @@ int main(){
     // Libération de la mémoire
     libererSupermat(sm);
 
+    // Test rendreSuperMat
+    // Création d'une supermatrice 3x4
+    SUPERMRT mat = allouerSupermat(3, 4);
+
+    if (mat == NULL) {
+        printf("Échec de l'allocation de la supermatrice.\n");
+        return 1;
+    }
+
+    // Remplir la matrice avec des valeurs simples (1, 2, 3, ...)
+    for (int i = 0; i < mat->nl; i++) {
+        for (int j = 0; j < mat->nc; j++) {
+            mat->ligne[i][j] = i * mat->nc + j + 1;
+        }
+    }
+
+    // Affichage de la supermatrice
+    printf("Supermatrice %dx%d :\n", mat->nl, mat->nc);
+    for (int i = 0; i < mat->nl; i++) {
+        for (int j = 0; j < mat->nc; j++) {
+            printf("%5.1f ", mat->ligne[i][j]);
+        }
+        printf("\n");
+    }
+
+    // Libération de la mémoire
+    rendreSupermat(mat);
+
+    printf("Supermatrice libérée avec succès.\n");
+
     return 0;
 }
-
