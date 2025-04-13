@@ -1,20 +1,20 @@
 #include "supermat.h"
-#include <stdbool.h> // Pour le type bool
+#include <stdbool.h>
 
-// Fonction d'allocation d'une supermatrice
+
 SUPERMRT allouerSupermat(int nl, int nc) {
-    // Allocation du descripteur de la supermatrice
+
     SUPERMRT sm = (SUPERMRT)malloc(sizeof(Supermatrice));
     if (sm == NULL) {
         fprintf(stderr, "Erreur d'allocation de la supermatrice\n");
         return NULL;
     }
 
-    // Initialisation des dimensions
+ 
     sm->nl = nl;
     sm->nc = nc;
 
-    // Allocation du tableau de pointeurs vers les lignes
+   
     sm->ligne = (double**)malloc(nl * sizeof(double*));
     if (sm->ligne == NULL) {
         fprintf(stderr, "Erreur d'allocation des pointeurs de ligne\n");
@@ -22,7 +22,7 @@ SUPERMRT allouerSupermat(int nl, int nc) {
         return NULL;
     }
 
-    // Allocation d'un bloc mémoire unique pour stocker tous les éléments
+ 
     double *data = (double*)malloc(nl * nc * sizeof(double));
     if (data == NULL) {
         fprintf(stderr, "Erreur d'allocation de la mémoire des coefficients\n");
@@ -31,7 +31,6 @@ SUPERMRT allouerSupermat(int nl, int nc) {
         return NULL;
     }
 
-    // Attribution des pointeurs de ligne
     for (int i = 0; i < nl; i++) {
         sm->ligne[i] = &data[i * nc];
     }
@@ -39,37 +38,31 @@ SUPERMRT allouerSupermat(int nl, int nc) {
     return sm;
 }
 
-// Fonction de libération de la mémoire allouée pour une supermatrice
-void libererSupermat(SUPERMRT sm) {
-    if (sm != NULL) {
-        if (sm->ligne != NULL) {
-            free(sm->ligne[0]); // Libère le bloc de données
-            free(sm->ligne);     // Libère le tableau de pointeurs
+
+void afficher(SUPERMRT a) {
+    if (a == NULL || a->ligne == NULL) {
+        printf("La supermatrice est vide.\n");
+        return;
+    }
+
+    for (int i = 0; i < a->nl; i++) {
+        for (int j = 0; j < a->nc; j++) {
+            printf("%5.2f ", a->ligne[i][j]);
         }
-        free(sm); // Libère le descripteur
+        printf("\n");
     }
 }
 
-
-/**
-    * @brief Vérifie si les lignes de la supermatrice sont contiguës en mémoire.
-    * @param sm Pointeur vers la supermatrice à vérifier.
-    * @return 2 si les lignes sont contiguës en ordre, 2 contiguës en desordre et 0 dans les autres cas.  
-*/
 int contiguite(SUPERMRT sm) {
     bool contigu = 0; 
     if (sm == NULL || sm->ligne == NULL) {
         return contigu;
     }
 
-    // Vérification de la contiguïté dans l'ordre
-    // Verifier que l'addresse du 1er élément de la ligne i+1 est égale à l'adresse de la ligne i + 1 est nc fois plus loin de l'adresse de la ligne i
-    // Une autre façon de faire est de vérifier que l'adresse de la ligne i decalée de nc donne l'adresse de la ligne i + 1
-    // &(sm->ligne[i + 1]) == &(sm->ligne[i + nc])
     for (int i = 0; i < sm->nl - 1; i++) {
         if ((sm->ligne[i + 1] - sm->ligne[i]) != sm->nc) {
             contigu = 1;
-            break; // Arrêt si on trouve une ligne non contiguë
+            break;
         }else{
             contigu = 2; 
         }
@@ -86,25 +79,20 @@ int contiguite(SUPERMRT sm) {
     return contigu;
 }
 
-// Fonction pour libérer une supermatrice (inverse de allouerSupermat)
+
 void rendreSupermat(SUPERMRT sm) {
     if (sm == NULL) return;
-
-    // Libérer chaque ligne
     for (int i = 0; i < sm->nl; i++) {
         free(sm->ligne[i]);
     }
-
-    // Libérer le tableau de pointeurs de lignes
     free(sm->ligne);
-
-    // Libérer la structure elle-même
     free(sm);
 }
 
-SUPERMRT sousMatrice(SUPERMRT a, int Ll, int L2, int cl, int c2) {
+
+SUPERMRT sousMatrice(SUPERMRT a, int l1, int l2, int c1, int c2) {
     // Vérification de la validité des indices
-    if (Ll < 0 || L2 >= a->nl || cl < 0 || c2 >= a->nc || Ll > L2 || cl > c2) {
+    if (l1 < 0 || l2 >= a->nl || c1 < 0 || c2 >= a->nc || l1 > l2 || c1 > c2) {
         fprintf(stderr, "Indices invalides pour la sous-matrice.\n");
         return NULL; // Retourne NULL si les indices sont incorrects
     }
@@ -113,25 +101,126 @@ SUPERMRT sousMatrice(SUPERMRT a, int Ll, int L2, int cl, int c2) {
     SUPERMRT sm_sous = (SUPERMRT)malloc(sizeof(Supermatrice));
     if (sm_sous == NULL) {
         fprintf(stderr, "Erreur d'allocation de la supermatrice.\n");
-        return NULL; // Si l'allocation échoue, retourne NULL
+        return NULL; 
     }
 
     // Initialiser les dimensions de la sous-matrice
-    sm_sous->nl = L2 - Ll + 1;
-    sm_sous->nc = c2 - cl + 1;
+    sm_sous->nl = l2 - l1 + 1;
+    sm_sous->nc = c2 - c1 + 1;
 
     // Allouer un tableau de pointeurs vers les lignes de la sous-matrice
     sm_sous->ligne = (double**)malloc(sm_sous->nl * sizeof(double*));
     if (sm_sous->ligne == NULL) {
         fprintf(stderr, "Erreur d'allocation des pointeurs de ligne de la sous-matrice.\n");
-        free(sm_sous);  // Libération du descripteur si l'allocation échoue
-        return NULL;    // Retourner NULL si l'allocation échoue
+        free(sm_sous);
+        return NULL;  
     }
 
     // Configurer les lignes de la sous-matrice pour qu'elles pointent vers les lignes correspondantes de la supermatrice
-    for (int i = Ll; i <= L2; i++) {
-        sm_sous->ligne[i - Ll] = &a->ligne[i][cl]; // Pointer sur la bonne partie de la ligne dans la supermatrice
+    for (int i = l1; i <= l2; i++) {
+        sm_sous->ligne[i - l1] = &a->ligne[i][c1];
+    }
+    return sm_sous;
+}
+
+
+SUPERMRT superProduit(SUPERMRT a, SUPERMRT b){
+    SUPERMRT result;
+    result->ligne = NULL; 
+    // Pour que a × b soit défini, a->nc doit être égal à b->nl
+    if (a->nc != b->nl) {return result;}
+
+    //Allouer la supermatrice résultat de taille (a->nl × b->nc)
+    result = allouerSupermat(a->nl, b->nc);
+    if (result->ligne == NULL) {
+        return result;
     }
 
-    return sm_sous; // Retourner la sous-matrice
+    // Effectuer la multiplication : result[i,j] = somme sur k de (a[i,k] * b[k,j])
+    for (int i = 0; i < a->nl; i++) {
+        for (int j = 0; j < b->nc; j++) {
+            double somme = 0.0;
+            for (int k = 0; k < a->nc; k++) {
+                somme += a->ligne[i][k] * b->ligne[k][j];
+            }
+            result->ligne[i][j] = somme;
+        }
+    }
+
+    return result;
 }
+
+
+void permuterLignes(SUPERMRT a, int i, int j){
+    // controle si les lignes entré existes dans la matrce
+    if (i < 0 || i >= a->nl || j < 0 || j >= a->nl) {
+        return;
+    }
+
+    // Si cest la meme ligne, pas besoin de permuter
+    if (i == j) {
+        return;
+    }
+
+    // Échange des pointeurs de lignes
+    double *temp = *(a->ligne + i);
+    *(a->ligne + i) = *(a->ligne + j);
+    *(a->ligne + j) = temp;
+}
+
+
+SUPERMRT matSupermat(double *m, int nld, int ncd, int nle, int nce){
+
+    SUPERMRT sm;
+     sm->ligne = NULL; 
+     sm->nl = 0;
+     sm->nc = 0;
+ 
+     // Vérification de la coherences des parametres
+     if (!m || nld <= 0 || ncd <= 0 || nle <= 0 || nce <= 0
+         || nle > nld || nce > ncd) {
+         
+         return sm;
+     }
+ 
+     // Initialisation du descripteur
+     sm->nl = nle;
+     sm->nc = nce;
+
+     // Allocation du tableau de pointeurs pour les lignes
+     sm->ligne = (double **) malloc(nle * sizeof(double *));
+     if (!sm->ligne) {
+         sm->nl = 0;
+         sm->nc = 0;
+         return sm;
+     }
+ 
+     // Construction des pointeurs : chaque ligne[i] pointe vers le début de la ligne i dans le tableau 
+     for (int i = 0; i < nle; i++) {
+         sm->ligne[i] = m + i * ncd;
+     }
+     return sm;
+}
+ 
+
+void supermatMat(SUPERMRT sm, double *m, int nld, int ncd, int nle, int nce){
+     // Vérification si sm et m existe
+     if (!sm->ligne || !m) {
+         return;
+     }
+ 
+     // Vérifier de les parametres sont coherents 
+     if (nle <= 0 || nce <= 0 || nle > sm->nl || nce > sm->nc
+         || nle > nld || nce > ncd) {
+         return;
+     }
+ 
+     // Recopie des éléments (par lignes)
+     for (int i = 0; i < nle; i++) {
+         for (int j = 0; j < nce; j++) {
+             // Position dans la destination : i*ncd + j
+             m[i * ncd + j] = sm->ligne[i][j];
+         }
+     }
+}
+ 
