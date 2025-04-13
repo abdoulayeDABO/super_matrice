@@ -1,20 +1,25 @@
 #include "supermat.h"
-#include <stdbool.h>
 
-
+/**
+ * @brief Allouer l'espace mémoire pour une supermatrice de taille nl x nc.
+ * @param nl 
+ * @param nc 
+ * @return SUPERMRT 
+ */
 SUPERMRT allouerSupermat(int nl, int nc) {
 
+    // Allocation de la supermatrice
     SUPERMRT sm = (SUPERMRT)malloc(sizeof(Supermatrice));
     if (sm == NULL) {
         fprintf(stderr, "Erreur d'allocation de la supermatrice\n");
         return NULL;
     }
 
- 
+    // Initialisation des dimensions
     sm->nl = nl;
     sm->nc = nc;
 
-   
+    // Allocation d'un tableau de pointeurs pour les lignes
     sm->ligne = (double**)malloc(nl * sizeof(double*));
     if (sm->ligne == NULL) {
         fprintf(stderr, "Erreur d'allocation des pointeurs de ligne\n");
@@ -22,7 +27,7 @@ SUPERMRT allouerSupermat(int nl, int nc) {
         return NULL;
     }
 
- 
+    // Allocation d'un tableau de coefficients
     double *data = (double*)malloc(nl * nc * sizeof(double));
     if (data == NULL) {
         fprintf(stderr, "Erreur d'allocation de la mémoire des coefficients\n");
@@ -31,8 +36,9 @@ SUPERMRT allouerSupermat(int nl, int nc) {
         return NULL;
     }
 
+    // Initiasation du tableau de pointeurs contenant les adresses des lignes
     for (int i = 0; i < nl; i++) {
-        sm->ligne[i] = &data[i * nc];
+        sm->ligne[i] = &data[i * nc]; // on decale chaque fois de nc pour assigner  a ligne[i] l'addresse de la ieme ligne
     }
 
     return sm;
@@ -47,35 +53,41 @@ void afficher(SUPERMRT a) {
 
     for (int i = 0; i < a->nl; i++) {
         for (int j = 0; j < a->nc; j++) {
-            printf("%5.2f ", a->ligne[i][j]);
+            printf("%10.2f ", a->ligne[i][j]);
         }
         printf("\n");
     }
 }
 
+
 int contiguite(SUPERMRT sm) {
-    bool contigu = 0; 
+    int contigu = 0; 
     if (sm == NULL || sm->ligne == NULL) {
         return contigu;
     }
 
     for (int i = 0; i < sm->nl - 1; i++) {
-        if ((sm->ligne[i + 1] - sm->ligne[i]) != sm->nc) {
+
+         if ((sm->ligne[i + 1] - sm->ligne[i]) != sm->nc) {
             contigu = 1;
             break;
-        }else{
-            contigu = 2; 
         }
+
+        // Erreur d'implementation : apres le break contigu est tj a 1
+        // if ((sm->ligne[i + 1] - sm->ligne[i]) != sm->nc) {
+        //     contigu = 1;
+        //     break;
+        // }else{
+        //     contigu = 2; 
+        // }
 
         // Methode alternative pour vérifier la contiguïté
         // if(&(sm->ligne[i + 1]) != &(sm->ligne[i + sm -> nc])){
         //     contigu = 1;
-        //     break; 
-        // }else{
-        //     contigu = 2; 
         // }
     }
 
+    contigu = 2; 
     return contigu;
 }
 

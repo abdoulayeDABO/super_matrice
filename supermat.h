@@ -7,11 +7,10 @@
 
 #define acces(a, i, j) ((a)->ligne[i][j])
 
-
 typedef struct {
     int nl;   
     int nc;    
-    double **ligne;
+    double **ligne; // tableau de pointeurs vers les lignes
 } Supermatrice;
 
 

@@ -4,7 +4,7 @@
 
 int main(){
 
-    int nl = 3, nc = 4;
+    int nl = 4, nc = 4;
     
 
     // Allocation de la supermatrice
@@ -27,6 +27,7 @@ int main(){
 
     // Vérification de la contiguïté
     int result = contiguite(sm);
+    printf("Contiguite de la supermatrice : %d \n", result);
     if (result == 2) {
         printf("Les lignes de la supermatrice sont contigues en ordre.\n");
     } else if (result == 1) {
