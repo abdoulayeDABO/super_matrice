@@ -2,8 +2,8 @@
 
 /**
  * @brief Allouer l'espace mémoire pour une supermatrice de taille nl x nc.
- * @param nl 
- * @param nc 
+ * @param nl: nombre de lignes
+ * @param nc: nombre de colonnes
  * @return SUPERMRT 
  */
 SUPERMRT allouerSupermat(int nl, int nc) {
@@ -45,21 +45,33 @@ SUPERMRT allouerSupermat(int nl, int nc) {
 }
 
 
-void afficher(SUPERMRT a) {
-    if (a == NULL || a->ligne == NULL) {
+/**
+ * @brief Affche les coeficients de la supermatrice.
+ * 
+ * @param sm : la supermatrice a afficher
+ * @return void 
+ */
+void afficher(SUPERMRT sm) {
+    if (sm == NULL || sm->ligne == NULL) {
         printf("La supermatrice est vide.\n");
         return;
     }
 
-    for (int i = 0; i < a->nl; i++) {
-        for (int j = 0; j < a->nc; j++) {
-            printf("%10.2f ", a->ligne[i][j]);
+    for (int i = 0; i < sm->nl; i++) {
+        for (int j = 0; j < sm->nc; j++) {
+            printf("%10.2f ", sm->ligne[i][j]);
         }
         printf("\n");
     }
 }
 
 
+/**
+ * @brief Verifie si les lignes de la supermatrice est contigue ou non.
+ * 
+ * @param sm : la supermatrice
+ * @return int : 0 si les lignes ne sont pas contigues, 1 si elles le sont mais en desordre, 2 si elles le sont en ordre.
+ */
 int contiguite(SUPERMRT sm) {
     int contigu = 0; 
     if (sm == NULL || sm->ligne == NULL) {
@@ -92,6 +104,12 @@ int contiguite(SUPERMRT sm) {
 }
 
 
+/**
+ * @brief Liber la mémoire allouée pour la supermatrice.
+ * 
+ * @param sm 
+ * @return void 
+ */
 void rendreSupermat(SUPERMRT sm) {
     if (sm == NULL) return;
     for (int i = 0; i < sm->nl; i++) {
@@ -102,6 +120,16 @@ void rendreSupermat(SUPERMRT sm) {
 }
 
 
+/**
+ * @brief Extrait une sous-matrice de la supermatrice donnée.
+ * 
+ * @param a : la supermatrice d'origine
+ * @param l1 : indice de la première ligne de la sous-matrice
+ * @param l2 : indice de la dernière ligne de la sous-matrice
+ * @param c1 : indice de la première colonne de la sous-matrice
+ * @param c2 : indice de la dernière colonne de la sous-matrice
+ * @return SUPERMRT : Un pointeur vers la nouvelle supermatrice contenant la sous-matrice extraite.
+ */
 SUPERMRT sousMatrice(SUPERMRT a, int l1, int l2, int c1, int c2) {
     // Vérification de la validité des indices
     if (l1 < 0 || l2 >= a->nl || c1 < 0 || c2 >= a->nc || l1 > l2 || c1 > c2) {
@@ -135,10 +163,19 @@ SUPERMRT sousMatrice(SUPERMRT a, int l1, int l2, int c1, int c2) {
     return sm_sous;
 }
 
-
+/**
+ * @brief Fai let le produit de deux supermatrices.
+ * 
+ * @param a : La première supermatrice a
+ * @param b : La deuxième supermatrice b
+ * @return SUPERMRT : Un pointeur vers la supermatrice résultante du produit.
+ */
 SUPERMRT superProduit(SUPERMRT a, SUPERMRT b){
-    SUPERMRT result;
-    result->ligne = NULL; 
+    SUPERMRT result = (SUPERMRT)malloc(sizeof(Supermatrice));
+    if (result == NULL) {
+        fprintf(stderr, "Erreur d'allocation de la supermatrice\n");
+        return NULL;
+    }
     // Pour que a × b soit défini, a->nc doit être égal à b->nl
     if (a->nc != b->nl) {return result;}
 
@@ -162,10 +199,16 @@ SUPERMRT superProduit(SUPERMRT a, SUPERMRT b){
     return result;
 }
 
-
-void permuterLignes(SUPERMRT a, int i, int j){
+/**
+ * @brief Permute les lignes i et j de la supermatrice sm.
+ * 
+ * @param i : indice de la première ligne
+ * @param j : indice de la deuxième ligne
+ * @return void
+ */
+void permuterLignes(SUPERMRT sm, int i, int j){
     // controle si les lignes entré existes dans la matrce
-    if (i < 0 || i >= a->nl || j < 0 || j >= a->nl) {
+    if (i < 0 || i >= sm->nl || j < 0 || j >= sm->nl) {
         return;
     }
 
@@ -175,19 +218,31 @@ void permuterLignes(SUPERMRT a, int i, int j){
     }
 
     // Échange des pointeurs de lignes
-    double *temp = *(a->ligne + i);
-    *(a->ligne + i) = *(a->ligne + j);
-    *(a->ligne + j) = temp;
+    double *temp = *(sm->ligne + i);
+    *(sm->ligne + i) = *(sm->ligne + j);
+    *(sm->ligne + j) = temp;
 }
 
 
+
+/**
+ * @brief Crée une supermatrice à partir d'un tableau de coefficients.
+ * 
+ * @param m : le tableau de coefficients
+ * @param nld : nombre de lignes du tableau
+ * @param ncd : nombre de colonnes du tableau
+ * @param nle : nombre de lignes de la supermatrice
+ * @param nce : nombre de colonnes de la supermatrice
+ * @return SUPERMRT : Un pointeur vers la supermatrice créée.
+ */
 SUPERMRT matSupermat(double *m, int nld, int ncd, int nle, int nce){
 
-    SUPERMRT sm;
-     sm->ligne = NULL; 
-     sm->nl = 0;
-     sm->nc = 0;
- 
+    SUPERMRT sm = (SUPERMRT)malloc(sizeof(Supermatrice));
+    if (sm == NULL) {
+        fprintf(stderr, "Erreur d'allocation de la supermatrice\n");
+        return NULL;
+    }
+
      // Vérification de la coherences des parametres
      if (!m || nld <= 0 || ncd <= 0 || nle <= 0 || nce <= 0
          || nle > nld || nce > ncd) {
@@ -201,9 +256,8 @@ SUPERMRT matSupermat(double *m, int nld, int ncd, int nle, int nce){
 
      // Allocation du tableau de pointeurs pour les lignes
      sm->ligne = (double **) malloc(nle * sizeof(double *));
-     if (!sm->ligne) {
-         sm->nl = 0;
-         sm->nc = 0;
+     if (sm->ligne == NULL) {
+         fprintf(stderr, "Erreur d'allocation de la supermatrice\n");
          return sm;
      }
  
@@ -215,6 +269,17 @@ SUPERMRT matSupermat(double *m, int nld, int ncd, int nle, int nce){
 }
  
 
+/**
+ * @brief Recopie les éléments d'une supermatrice dans un tableau de coefficients.
+ * 
+ * @param sm : la supermatrice à copier
+ * @param m : le tableau de coefficients
+ * @param nld : nombre de lignes du tableau
+ * @param ncd : nombre de colonnes du tableau
+ * @param nle : nombre de lignes de la supermatrice
+ * @param nce : nombre de colonnes de la supermatrice
+ * @return void 
+ */
 void supermatMat(SUPERMRT sm, double *m, int nld, int ncd, int nle, int nce){
      // Vérification si sm et m existe
      if (!sm->ligne || !m) {
