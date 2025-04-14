@@ -78,7 +78,7 @@ Ces étapes vous permettront de cloner un dépôt, de créer des branches, et d'
 #### En ligne de commande
 
 ```bash
-gcc -o super_matrice client.c supermat.c
+gcc -o supermat client.c supermat.c
 
 ```
 
