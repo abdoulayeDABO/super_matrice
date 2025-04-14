@@ -66,7 +66,7 @@ int main(){
         printf("Erreur lors de la creation de la sous-matrice.\n");
     } else {
         // Affichage de la sous-matrice
-        printf("Sous-matrice extraite de (%d,%d) a (%d,%d) :\n", l1, c1, l2, c2);
+        printf("Sous-matrice extraite de ligne (%d -> %d) et colone (%d -> %d) :\n", l1, l2, c1, c2);
         afficher(sm_sous);
         // Libération de la mémoire de la sous-matrice
         rendreSupermat(sm_sous);

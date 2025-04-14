@@ -164,7 +164,7 @@ SUPERMRT sousMatrice(SUPERMRT a, int l1, int l2, int c1, int c2) {
 }
 
 /**
- * @brief Fai let le produit de deux supermatrices.
+ * @brief Fai  le produit de deux supermatrices.
  * 
  * @param a : La première supermatrice a
  * @param b : La deuxième supermatrice b
